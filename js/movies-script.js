@@ -101,3 +101,62 @@ const movies = [
     url: "https://www.imdb.com/title/tt0110912/",
   },
 ];
+
+const moviesContainer = document.querySelector("#movies-container");
+
+const selectedCategory = document.querySelector("#category-select");
+const searchInput = document.querySelector("#gsearch");
+const form = document.querySelector("form");
+
+function filterMovies() {
+  const selectedValue = selectedCategory.value;
+  const searchTerm = searchInput.value.toLowerCase().trim();
+
+  let filteredMovies = movies;
+
+  if (selectedValue != "Alle") {
+    filteredMovies = filteredMovies.filter((item) => {
+      return item.genre === selectedValue;
+    });
+  }
+
+  if (searchTerm != "") {
+    filteredMovies = filteredMovies.filter((item) => {
+      return item.titel.toLowerCase().includes(searchTerm);
+    });
+  }
+  displayMovies(filteredMovies);
+}
+
+selectedCategory.addEventListener("change", filterMovies);
+searchInput.addEventListener("input", filterMovies);
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  filterMovies();
+});
+
+function displayMovies(moviesList) {
+  moviesContainer.innerHTML += "";
+  const html = moviesList
+    .map((item) => {
+      return `
+    <article>
+    <h2>${item.titel}</h2>
+    <ul>
+        <li>Genre: ${item.genre}</li>
+        <li>År: ${item.year}</li>
+        <li>Varighed: ${item.duration}</li>
+    </ul>
+    <figure>
+        <a href="${item.url}" target="_blank" rel="noopener noreferrer">
+            <img src="${item.img}" alt="${item.titel}">
+        </a>
+        <figcaption>Læs mere på IMDB</figcaption>
+    </figure>
+    </article>
+    `;
+    })
+    .join("");
+  moviesContainer.innerHTML = html;
+}
+displayMovies(movies);
